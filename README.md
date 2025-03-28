@@ -112,4 +112,43 @@ Tanpa mekanisme ini, Rust tidak akan mengizinkan perubahan pada variabel statis 
 
 #### Reflection Subscriber-2
 
+1. Eksplorasi di Luar Langkah-Langkah Tutorial
+Ya, saya melangkah lebih jauh dari instruksi dalam tutorial, terutama dengan mengeksplorasi src/lib.rs. File ini berperan sebagai titik masuk aplikasi, yang mengatur bagaimana framework Rocket dikonfigurasi. Dari eksplorasi ini, saya memahami:
 
+Cara kerja fairing Rocket dalam menambahkan fitur tambahan ke server.
+
+Cara environment variable dimuat dan diterapkan di seluruh aplikasi.
+
+Bagaimana arsitektur aplikasi dipisahkan secara jelas antara controller, service, dan repository untuk meningkatkan modularitas.
+
+2. Pola Observer dan Skalabilitas
+Pola Observer mempermudah proses menambahkan lebih banyak subscriber ke dalam sistem. Dalam implementasi kita:
+
+Setiap instance Receiver baru dapat secara independen berlangganan ke jenis produk yang diminatinya.
+
+Publisher (aplikasi utama) tidak perlu mengetahui keberadaan Receiver baru sebelumnya.
+
+Menambahkan Receiver baru cukup dengan menjalankan instance baru dengan port dan nama yang berbeda.
+
+Keunggulan utama dari pola ini adalah pemisahan yang jelas antara subject (Publisher) dan observer (Receiver).
+
+Namun, jika ingin meningkatkan skala Publisher (aplikasi utama), ada tantangan tambahan, seperti:
+
+Menggunakan database bersama untuk menyimpan informasi produk di seluruh instance Publisher.
+
+Menyinkronkan daftar subscription agar setiap instance Publisher memiliki informasi yang sama.
+
+Menerapkan load balancing untuk menangani permintaan masuk secara efisien.
+
+Pola Observer sendiri tidak cukup untuk menangani kompleksitas ini, karena dirancang untuk notifikasi satu-ke-banyak. Untuk sistem dengan banyak Publisher dan banyak Subscriber, kita perlu pola arsitektur tambahan, seperti message broker atau event bus.
+
+3. Pengujian dan Dokumentasi
+Saya meningkatkan koleksi Postman dengan contoh serta deskripsi terperinci untuk setiap endpoint. Ini sangat membantu dalam pengujian, terutama saat menjalankan beberapa instance aplikasi. Dokumentasi ini membantu saya:
+
+Mengidentifikasi tujuan dan kebutuhan setiap endpoint.
+
+Memahami format respons yang diharapkan.
+
+Mendiagnosis masalah dengan membandingkan respons aktual dan yang seharusnya.
+
+Dalam konteks tutorial ini, dokumentasi API yang baik sangat membantu untuk memverifikasi apakah pola Observer berfungsi dengan benar. Selain itu, dalam proyek tim, dokumentasi ini akan mempermudah anggota tim dalam berinteraksi dengan API tanpa harus membaca seluruh kode sumber.
