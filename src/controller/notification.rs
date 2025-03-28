@@ -29,3 +29,11 @@ use crate::service::notification::NotificationService;
          Err(e) => Err(e)
      };
  }
+ 
+ #[get("/")]
+ pub fn list() -> Result<Json<Vec<String>>> {
+     return match NotificationService::list_message() {
+         Ok(f) => Ok(Json::from(f)),
+         Err(e) => Err(e)
+     }
+ }
