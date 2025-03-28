@@ -86,7 +86,29 @@ This is the place for you to write reflections:
 
 #### Reflection Subscriber-1
 
+1. Perbandingan RwLock dan Mutex
+Dalam tutorial ini, kita menggunakan RwLock<Vec<Notification>> untuk menyinkronkan akses ke daftar notifikasi. RwLock (Read-Write Lock) sangat berguna karena memungkinkan beberapa thread membaca data secara bersamaan, tetapi tetap membatasi akses hanya satu thread saat melakukan penulisan. Hal ini penting untuk sistem notifikasi karena:
 
+Pembacaan notifikasi (misalnya, menampilkan daftar notifikasi) terjadi sering dan dapat dilakukan secara paralel.
+
+Penambahan notifikasi baru (penulisan) terjadi lebih jarang, tetapi memerlukan akses eksklusif untuk menjaga konsistensi data.
+
+Kita tidak menggunakan Mutex karena kurang efisien dalam skenario ini. Mutex memberikan akses eksklusif baik untuk membaca maupun menulis, yang berarti hanya satu thread yang dapat membaca data dalam satu waktu. Hal ini akan menghambat kinerja, terutama saat ada banyak permintaan pembacaan secara bersamaan, karena mereka harus menunggu satu sama lain meskipun tidak mengubah data.
+
+2. Perbedaan Variabel Statis di Rust dan Java
+Rust memiliki pendekatan berbeda dalam menangani variabel statis dibandingkan dengan Java, karena Rust menerapkan prinsip kepemilikan dan keamanan memori secara ketat.
+
+Di Java, variabel statis dapat dimodifikasi dengan mudah melalui metode statis tanpa banyak kendala. Namun, Rust melarang modifikasi langsung terhadap variabel statis tanpa mekanisme sinkronisasi untuk mencegah race condition dan memastikan keamanan thread.
+
+Untuk mengatasi keterbatasan ini, kita menggunakan lazy_static yang dikombinasikan dengan RwLock, yang memungkinkan kita untuk:
+
+Mendeklarasikan variabel statis yang dapat diinisialisasi saat runtime.
+
+Mengubah isinya secara aman dalam lingkungan multithreaded.
+
+Menjamin akses thread-safe terhadap data.
+
+Tanpa mekanisme ini, Rust tidak akan mengizinkan perubahan pada variabel statis karena dapat menyebabkan race condition dan akses memori tidak aman. Pendekatan ini sejalan dengan filosofi Rust tentang "konkurensi tanpa rasa takut", di mana kompiler memastikan keamanan thread sejak tahap kompilasi, sehingga mencegah bug konkurensi yang biasanya baru terdeteksi saat runtime di bahasa lain seperti Java.
 
 #### Reflection Subscriber-2
 
